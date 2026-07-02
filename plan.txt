@@ -1,0 +1,14 @@
+Buatkan issue.md, berisi planning untuk membuat Note App menggunakan framework php yang sudah dibuat dalam folder ini
+yaitu Laravel.
+
+Menggunakan Bun, dan gunakan dependency:
+-TailwindCSS untuk styling
+-React untuk membuat web lebih interaktif
+-MariaDB
+
+Jangan terlalu low level atau detail
+
+cukup intruksi-kan secara high level
+
+nanti document planning nya akan digunakan oleh model yang lebih murah
+untuk diimplementasikan
