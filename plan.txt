@@ -1,14 +1,30 @@
-Buatkan issue.md, berisi planning untuk membuat Note App menggunakan framework php yang sudah dibuat dalam folder ini
-yaitu Laravel.
+Buat issue.md baru berisi desain database,migration,dan model laravel.
 
-Menggunakan Bun, dan gunakan dependency:
--TailwindCSS untuk styling
--React untuk membuat web lebih interaktif
--MariaDB
+- perubahan pada tabel migration create_users_table:
+id              bigint unsigned     PK,AUTO INCREMENT   (ID Pengguna)
+name            varchar(100)        NOT NULL            (Nama Pengguna)
+email           varchar(255)        NOT NULL,UNIQUE     (Email Pengguna)
+password        varchar(255)        NOT NULL            (Hashed Password)
+created_at      timestamp           NULL                (waktu dibuat)
+updated_at      timestamp           NULL                (waktu diperbarui)
 
-Jangan terlalu low level atau detail
+- buat tabel migration baru create_notes_table:
+id              bigint unsigned     PK,AUTO INCREMENT   (ID Note)
+user_id         bigint unsigned     FK,NOT NULL         (Mengacu ke users.id)
+title           varchar(255)        NOT NULL            (Judul catatan)
+content         text                NOT NULL            (Isi catatan)
+created_at      timestamp           NULL                (waktu dibuat)
+updated_at      timestamp           NULL                (waktu diperbarui)
 
-cukup intruksi-kan secara high level
+- untuk tabel migration create_notes_table tambahkan constrained(),cascadeOnDelete() pada foreign key user_id
 
-nanti document planning nya akan digunakan oleh model yang lebih murah
-untuk diimplementasikan
+- saya mau relasi kedua model seperti:
+user memiliki banyak Note (one to many)
+sebuah note hanya dimiliki oleh satu User (one to one)
+
+- ubah model User dengan menambahkan relasi dengan model Note
+- buat model Note dan relasikan dengan User
+
+
+Jangan terlalu low level atau detail,cukup intruksi-kan secara high level.
+Nanti document planning nya akan digunakan oleh model yang lebih murah untuk diimplementasikan.

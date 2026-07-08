@@ -1,35 +1,40 @@
-# Notes App Setup Plan
+# Database, Migrations, and Models Setup
 
-This document outlines the high-level steps to set up the foundation for a Notes App using Laravel, React, TailwindCSS, and MariaDB. We will be using Bun as our package manager and JavaScript runtime. This plan focuses solely on environment configuration and project scaffolding, excluding feature implementation.
+This document outlines the high-level tasks to implement the database schema, migrations, and model relationships for the Notes Application in Laravel.
 
-## 1. Environment & Database Setup
-- Configure the `.env` file to use MariaDB as the database connection (set `DB_CONNECTION=mariadb` or `mysql` with the appropriate MariaDB port and credentials).
-- Create a new database in MariaDB for the notes application.
-- Run the default Laravel migrations to ensure database connectivity is working properly.
+## 1. Database Migrations
 
-## 2. Frontend Tooling & Dependencies (Bun, React, TailwindCSS)
-- **Package Manager:**
-  - Ensure the project is initialized and ready to use Bun for package management.
-- **Dependencies:**
-  - Install React and its DOM package using Bun (`bun add react react-dom`). Add types if needed.
-  - Install TailwindCSS, PostCSS, and Autoprefixer (`bun add -D tailwindcss postcss autoprefixer`).
-  - Install the Vite React plugin (`bun add -D @vitejs/plugin-react`).
+### Users Table Migration
+Modify the existing user migration (`create_users_table`) to match the following schema:
+- `id`: Primary key, auto-increment (BigInteger unsigned)
+- `name`: String, max length 100, not null
+- `email`: String, max length 255, unique, not null
+- `password`: String, max length 255, not null
+- `created_at` / `updated_at`: Nullable timestamps
 
-## 3. Configuration (Tailwind, Vite, & React)
-- **TailwindCSS:**
-  - Initialize the Tailwind configuration (`bunx tailwindcss init -p`).
-  - Configure `tailwind.config.js` to scan Laravel view files (e.g., `resources/views/**/*.blade.php`) and React components (`resources/js/**/*.{js,jsx,ts,tsx}`) for Tailwind utility classes.
-- **Vite:**
-  - Update `vite.config.js` to include the React plugin and set up your entry points (e.g., `resources/css/app.css` and `resources/js/app.jsx` or `app.tsx`).
-  - Add the standard Tailwind directives to your main CSS file (`resources/css/app.css`).
-- **Laravel View Integration:**
-  - Create or update the main Laravel blade view (e.g., `resources/views/app.blade.php`).
-  - Include a root `div` (e.g., `<div id="app"></div>`) where React will be mounted.
-  - Use the `@vite` directive in the blade template to load your main CSS and JS entry points.
+### Notes Table Migration
+Create a new migration (`create_notes_table`) with the following schema:
+- `id`: Primary key, auto-increment (BigInteger unsigned)
+- `user_id`: Foreign key (BigInteger unsigned), not null. Must reference the `users` table with `constrained()` and `cascadeOnDelete()` rules.
+- `title`: String, max length 255, not null
+- `content`: Text, not null
+- `created_at` / `updated_at`: Nullable timestamps
 
-## 4. Basic Wiring & Verification
-- **Entry Point:**
-  - Create a basic React entry point (`resources/js/app.jsx` or similar) that uses `ReactDOM.createRoot` to render a simple placeholder component (e.g., "Hello World") into the root div to verify everything is connected.
-- **Run & Test Setup:**
-  - Start the backend server (`php artisan serve`) and the Vite development server (`bun run dev`).
-  - Verify that the Laravel app correctly serves the React frontend and that TailwindCSS styles are applied.
+---
+
+## 2. Eloquent Models & Relationships
+
+### User Model
+Update the `App\Models\User` model to establish a relationship with the `Note` model:
+- Define a `notes()` method establishing a **One-to-Many** relationship (`hasMany`) pointing to the `Note` model.
+
+### Note Model
+Create a new `App\Models\Note` model:
+- Define a `user()` method establishing a **BelongsTo** relationship (`belongsTo`) pointing to the `User` model.
+- Configure appropriate `$fillable` fields (`user_id`, `title`, `content`).
+
+---
+
+## 3. Verification & Execution
+- Run `php artisan migrate:fresh` to re-create the tables with the updated schemas.
+- (Optional) Use Laravel Tinker or a simple database query to verify that the tables are created with the correct columns, indexes, and constraints.
